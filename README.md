@@ -1,6 +1,6 @@
-# QA Agent — Ridepanda QA automation team
+# QA Agent — QA automation team
 
-A team of specialized AI agents, slash commands, and a chat web app that operate on Ridepanda's
+A team of specialized AI agents, slash commands, and a chat web app that operate on your
 [Checkly](https://www.checklyhq.com/) monitoring-as-code repository. This project is **the team, not the tests** — it contains
 no test code of its own. Instead it packages a router agent, a roster of specialized subagents, and a set of
 slash commands that read, write, run, and triage the Playwright browser checks living in a separate target repository.
@@ -39,8 +39,8 @@ Every command and subagent in this project reads and writes against `$TARGET_REP
 `QA Agent` folder. The target path is defined in a **single place** — [`.claude/settings.json`](.claude/settings.json) — and
 exposed to every agent as a real shell environment variable. If the path ever changes, it is updated there only.
 
-The target repo contains Playwright browser checks running against real staging applications (Forest Admin, Portal,
-Google Catalog), configured as Checkly monitoring-as-code.
+The target repo contains Playwright browser checks running against your real staging applications, configured as
+Checkly monitoring-as-code.
 
 ---
 
@@ -258,9 +258,12 @@ These apply to every agent and command, in every mode, without exception. The fu
 
 **Domain rules**
 
-- The 24-hour check frequency (`Frequency.EVERY_24H` / `1440`) is fixed company policy and is never suggested as a change.
+- The check frequency your team sets as policy (for example, `Frequency.EVERY_24H` / `1440`) is treated as fixed and is
+  never changed on the agent's own initiative.
 - `constants.ts` must not import construct files — this crashes the Checkly runner at runtime.
-- A Google Auth redirect at Forest login is a developer bug (ENV_AUTH), not something to work around in the test login code.
+
+Rules like these are configurable. Encode your own project's conventions and non-negotiables in
+[`CLAUDE.md`](CLAUDE.md), and every agent and command will honor them.
 
 **Working-directory discipline** (because there are two repos)
 
@@ -282,6 +285,6 @@ untracked files, so:
 
 ## Project status
 
-Active and in use. One area is a known gap, not yet designed: **staging/environment data preparation** (creating test
-orders, users, or records before a check runs). It is currently part manual (Forest Admin UI) and part existing internal
-seed script — a dedicated command around it is pending those specifics.
+Active and in use. One area is a known gap, not yet designed: **staging/environment data preparation** (creating the
+test orders, users, or records a check depends on before it runs). This is typically part manual (an internal admin UI)
+and part scripted (a seed script or API) — a dedicated command around it is pending those specifics for your environment.
