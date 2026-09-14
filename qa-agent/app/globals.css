@@ -1,0 +1,299 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --foreground: oklch(0.95 0.006 260);
+
+  /* QA Agent design tokens — ported 1:1 from the design mock so every
+     surface/border/accent has a single source of truth. */
+  --qa-bg: #0a0c11;
+  --qa-sidebar: oklch(0.183 0.011 262);
+  --qa-border: oklch(0.265 0.013 262);
+  --qa-border-soft: oklch(0.235 0.012 262);
+  --qa-border-hair: oklch(0.215 0.011 262);
+  --qa-panel: oklch(0.175 0.01 262);
+  --qa-panel-sunken: oklch(0.145 0.01 262);
+  --qa-panel-code: oklch(0.125 0.009 262);
+  --qa-hover: oklch(0.25 0.013 262);
+  --qa-accent: oklch(0.74 0.13 250);
+  --qa-accent-strong: oklch(0.84 0.11 248);
+  --qa-btn: oklch(0.55 0.15 252);
+  /* Darker on hover, not lighter — white button text needs >=4.5:1 and a
+     lighter blue here (e.g. 0.62) drops that to ~3.7:1 (verified: bumping
+     brightness on hover reads fine visually but fails contrast for filled
+     buttons at this saturation). */
+  --qa-btn-hover: oklch(0.5 0.16 252);
+  --qa-newchat: oklch(0.28 0.05 255);
+  --qa-newchat-hover: oklch(0.34 0.07 254);
+  --qa-newchat-border: oklch(0.42 0.09 252);
+  --qa-active: oklch(0.26 0.03 255);
+  --qa-green: oklch(0.76 0.15 155);
+  --qa-red: oklch(0.68 0.18 25);
+  --qa-amber: oklch(0.8 0.14 80);
+  --qa-text: oklch(0.95 0.006 260);
+  --qa-text-2: oklch(0.86 0.008 262);
+  /* text-dim/text-mute lightness verified against every panel/hover/active
+     surface these tokens render on (worst case oklch(0.26 0.03 255)) —
+     0.72/0.66 is the minimum that clears 4.5:1 everywhere; the prior
+     0.62/0.54 measured as low as 2.9:1. */
+  --qa-text-dim: oklch(0.72 0.012 262);
+  --qa-text-mute: oklch(0.66 0.012 262);
+  --qa-user-bubble: oklch(0.29 0.05 255);
+  --qa-user-border: oklch(0.37 0.07 254);
+  /* First stop darkened from 0.62 — the white "QA" glyph sitting on it only
+     cleared 3.6:1 against a 4.5:1 requirement (verified: same math as the
+     button tokens above). 0.52 is the badge's only use, so this doesn't
+     affect anything else. */
+  --qa-logo: linear-gradient(150deg, oklch(0.52 0.16 250), oklch(0.44 0.15 263));
+  --qa-main-bg:
+    radial-gradient(1300px 780px at 16% -16%, oklch(0.4 0.1 252 / 0.42) 0%, transparent 68%),
+    radial-gradient(1100px 700px at 90% 0%, oklch(0.36 0.09 290 / 0.3) 0%, transparent 66%),
+    radial-gradient(1000px 560px at 50% 112%, oklch(0.32 0.07 246 / 0.26) 0%, transparent 70%),
+    linear-gradient(180deg, oklch(0.215 0.032 256) 0%, #0a0c11 58%, oklch(0.155 0.024 250) 100%);
+}
+
+@theme inline {
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Type scale — replaces the ad hoc text-[10.5px]/[12.5px]/[14.5px] values
+     that had accumulated across components with a documented set of roles.
+     Overrides Tailwind's own --text-* steps so every existing text-xs/sm/base
+     class picks these up for free; --text-2xs is new (Tailwind ships nothing
+     below xs). Floor is 11px — the prior 9.5-10.5px labels measured below the
+     legibility bar in live testing (see .impeccable/critique/2026-08-24T17-09-35Z__qa-agent.md). */
+  --text-2xs: 0.6875rem; /* 11px — meta labels, timestamps, badges (floor) */
+  --text-2xs--line-height: 1.45;
+  --text-xs: 0.75rem; /* 12px — secondary text, hints, descriptions */
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.8125rem; /* 13px — UI text, buttons, nav, inputs */
+  --text-sm--line-height: 1.5;
+  /* 15px, not the 16px web-body default — this is a dense Operate surface
+     (chat/console), and 15px is the density-justified floor: it matches the
+     compact-but-readable body size this product's own reference points
+     (Claude Code CLI transcripts, Slack, Discord) already converged on. */
+  --text-base: 0.9375rem; /* 15px — chat body copy, prose */
+  --text-base--line-height: 1.65;
+  --text-lg: 1rem; /* 16px — modal headers, section titles */
+  --text-lg--line-height: 1.4;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--qa-bg);
+  /* Themes native form-control chrome (date pickers, the file-picker dialog,
+     default scrollbars where .scroll-thin isn't applied) to match the dark
+     surface instead of leaving it OS-light. */
+  color-scheme: dark;
+}
+
+body {
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: oklch(0.55 0.15 252 / 0.4);
+}
+
+/* Thin, unobtrusive scrollbars for the sidebar and scrollable panes —
+   the default OS scrollbar is jarring against the dark, glassy surfaces. */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.03);
+  }
+}
+
+@keyframes status-ping {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 0.55;
+  }
+  100% {
+    box-shadow: 0 0 0 6px currentColor;
+    opacity: 0;
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes qa-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+
+@keyframes qa-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Claude-style streaming reveal: each block of the assistant's answer fades in
+   from a soft blur as it arrives, so text "materializes" instead of popping in.
+   Applied per top-level block (see .qa-stream-live below) and only on the LIVE
+   turn — a CSS animation runs once at mount, so an appended block animates while
+   the block already streaming keeps growing in place, untouched. The vertical
+   travel is deliberately tiny (2px): Claude's effect is mostly fade + sharpen,
+   not motion. */
+@keyframes qa-stream-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* Reduced-motion fallback — keep the fade (still legible "new content" feedback)
+   but drop the blur/translate. */
+@keyframes qa-stream-in-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Replaces Tailwind's animate-bounce on the "thinking" dots — a literal
+   bounce reads as a dated/tacky curve (real objects decelerate, they don't
+   bounce). Same staggered-dot idea, natural deceleration instead. */
+@keyframes qa-think {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* CommandsModal's mount moment — the one place in this UI that previously had
+   zero transition (open/close was an instant `if (!open) return null`). */
+@keyframes qa-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-breathe {
+    animation: breathe 9s ease-in-out infinite;
+  }
+  .animate-status-ping {
+    animation: status-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .animate-caret {
+    animation: caret-blink 1s steps(1) infinite;
+  }
+  .animate-qa-pulse {
+    animation: qa-pulse 1.4s ease-in-out infinite;
+  }
+  .animate-qa-rise {
+    animation: qa-rise 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  /* Every top-level block of a live assistant answer eases in as it streams.
+     `> *` catches whatever the block is — paragraph, list, heading, code card,
+     table — so the reveal is uniform without enumerating element types. */
+  .qa-stream-live > * {
+    animation: qa-stream-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-qa-stream-in {
+    animation: qa-stream-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-qa-think {
+    animation: qa-think 1.1s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+  .animate-qa-modal-in {
+    animation: qa-modal-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes qa-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Unguarded — a plain opacity fade carries no spatial motion, so it stays on
+   even under reduced-motion (animate.md: preserve state-transition feedback). */
+.animate-qa-fade-in {
+  animation: qa-fade-in 150ms linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion removes the spatial movement but keeps the opacity fade —
+     still legible feedback that something is loading/appearing, per
+     animate.md: "fewer and gentler, not disabled outright." */
+  .animate-qa-think {
+    animation: qa-pulse 1.4s ease-in-out infinite;
+  }
+  .animate-qa-modal-in {
+    animation: qa-fade-in 120ms linear both;
+  }
+  /* Keep the streaming reveal as a plain fade — no blur, no travel. */
+  .qa-stream-live > *,
+  .animate-qa-stream-in {
+    animation: qa-stream-in-fade 200ms linear both;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "checkly": {
+      "type": "http",
+      "url": "https://api.checklyhq.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CHECKLY_API_KEY}",
+        "X-Checkly-Account": "c1bfd24a-1b3e-4955-9e0f-c7c7f826b7d0"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "qa-agent-dev-verify",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/sebastiancerpa/Desktop/QA Agent/qa-agent", "run", "dev", "--", "-p", "3001"],
+      "port": 3001
+    }
+  ]
+}
